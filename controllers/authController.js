@@ -71,21 +71,27 @@ const loginController = (req, res, next) => {
         throw new Error('User not found');
       }
 
-      // compare incoming password from req.body with user's existing hashedPassword
+      /**
+       * compare incoming password from req.body with user's existing hashedPassword
+       * if (passwords match) create a token and send token in response body
+       */
       bcrypt
         .compare(password, user.password)
         .then((result) => {
-          if (!result) return res.status(401).json({ message: 'Authentication failed' });
+          if (result) {
+            const token = jwt.sign({ username: user.username }, process.env.SECRET_KEY, {
+              expiresIn: '72h',
+            });
+
+            return res.status(200).json({ message: 'Login successful', token });
+          }
+
+          return res.status(401).json({ message: 'Authentication failed' });
         })
         .catch((err) => {
-          console.error('Error: ', err);
+          console.error(err);
+          return res.status(500).json({ message: 'Internal server error' });
         });
-
-      const token = jwt.sign({ username: user.username }, process.env.SECRET_KEY, {
-        expiresIn: '72h',
-      });
-
-      return res.status(200).json({ message: 'Login successful', token });
     } else {
       const { details } = error;
       const { message } = details[0];
