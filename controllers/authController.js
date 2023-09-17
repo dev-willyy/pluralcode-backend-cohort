@@ -11,7 +11,6 @@ const cryptoValue = require('crypto').randomBytes(64).toString('hex');
 
 // define the path to the users.json file
 const usersDatabase = path.join('__dirname', '..', 'database', 'users.json');
-const secretKey = process.env.SECRET_KEY;
 
 const registerController = (req, res, next) => {
   const { value, error } = userSchema.validate(req.body);
@@ -82,7 +81,7 @@ const loginController = (req, res, next) => {
           console.error('Error: ', err);
         });
 
-      const token = jwt.sign({ username: user.username }, secretKey, {
+      const token = jwt.sign({ username: user.username }, process.env.SECRET_KEY, {
         expiresIn: '72h',
       });
 
