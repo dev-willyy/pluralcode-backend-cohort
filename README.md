@@ -25,18 +25,12 @@ Before running the project, make sure you have the following installed:
    cd your-project
    ```
 
-3. Inside the config directory, create a .env file:
+3. Create a config directory, inside the config directory, create a .env file:
 
-   ```
-   PORT=3000
-   SECRET_KEY=mysecretkey
-   ```
-
-4. Inside the config directory, create a .env file:
-
-   ```
-   PORT=3000
-   SECRET_KEY=mysecretkey
+   ```bash
+   mkdir config
+   cd config
+   touch .env
    ```
 
 ## Usage
