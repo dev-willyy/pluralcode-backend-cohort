@@ -46,7 +46,7 @@ Before running the project, make sure you have the following installed:
 2. **Start the Server:**
 
    ```bash
-   	npm run dev
+   npm run dev
    ```
 
    - This command will start the server. It will run on the specified PORT which you can configure in the .env file.
