@@ -50,9 +50,10 @@ const getSingleUserController = (req, res, next) => {
 
     if (payload) {
       const specificUser = users.find((user, index) => user.username === username && index === Number(id));
+      const { password, confirmPassword, ...otherCredentials } = specificUser;
 
       if (specificUser) {
-        res.status(200).json(specificUser);
+        res.status(200).json({ ...otherCredentials });
       } else {
         res.status(404).json({ message: 'User cannot be found' });
         const customError = new Error('User cannot be found');
