@@ -1,0 +1,18 @@
+[
+  {
+    "username": "Jidesky",
+    "email": "olajideamusat@gmail.com",
+    "password": "$2b$10$9BjW9EzHCC94ldTesNuwBuoznKaOLx0/0YKy/tNphEyhSoZD1HNR6",
+    "confirmPassword": "$2b$10$9BjW9EzHCC94ldTesNuwBuoznKaOLx0/0YKy/tNphEyhSoZD1HNR6",
+    "firstName": "Olajide",
+    "lastName": "Amusat"
+  },
+  {
+    "username": "Imole",
+    "email": "madumichael@gmail.com",
+    "password": "$2b$10$25WU8gQz9.ErqndMEA9JbuQ1MUfBXasXBGgsl/sQTKgLm8j8Oy66W",
+    "confirmPassword": "$2b$10$25WU8gQz9.ErqndMEA9JbuQ1MUfBXasXBGgsl/sQTKgLm8j8Oy66W",
+    "firstName": "Uchechukwu",
+    "lastName": "Madu"
+  }
+]
