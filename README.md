@@ -1,6 +1,7 @@
 # Pluralcode Node.js-Express Backend Cohort
 
-This is a basic Node.js Express project with a configuration directory for environment variables.
+- This is the remote repo that contains all our Nodejs backend lecture codes and assignment solutions for all covered weeks. It should serve as a progress guide and consistency tracker.
+- The commit messages are detailed, and can be used to track what week and topic is treated in a specific sub-directory
 
 ## Getting Started
 
@@ -19,13 +20,16 @@ Before running the project, make sure you have the following installed:
    git clone https://github.com/dev-willyy/pluralcode-backend-cohort.git
    ```
 
-2. Navigate to the project directory:
+2. `Steps 3 & 4` only applies if you are in the nodejs-express sub-directory. For all other sub-directories, `steps 3 & 4`, and then proceed to **Usage** section
+
+3. Navigate to the project directory:
 
    ```bash
    cd your-project
+   cd nodejs-express
    ```
 
-3. Create a config directory, inside the config directory, create a .env file:
+4. Create a config directory, inside the config directory, create a .env file:
 
    ```bash
    mkdir config
@@ -61,4 +65,5 @@ Before running the project, make sure you have the following installed:
    - If you'd like to contribute, please fork the repository and create a pull request. You can also open an issue for any bugs or feature requests.
 
 5. **License:**
-   - This project is licensed under the MIT License - see the LICENSE file for details.
+
+   - This project is licensed under the MIT License - see the [LICENSE file](https://github.com/git/git-scm.com/blob/main/MIT-LICENSE.txt) for details.
