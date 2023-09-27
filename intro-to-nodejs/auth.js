@@ -11,7 +11,7 @@ router.post('/login', (req, res) => {
 });
 
 router.post('/logout', (req, res) => {
-  res.send('This is the Login Route');
+  res.send('This is the Logout Route');
 });
 
 module.exports = { authRouter: router }; // export router as authRouter
