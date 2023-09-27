@@ -1,7 +1,7 @@
 # Pluralcode Node.js-Express Backend Cohort
 
-- This is the remote repo that contains all our Nodejs backend lecture codes and assignment solutions for all covered weeks. It should serve as a progress guide and consistency tracker.
-- The commit messages are detailed, and can be used to track what week and topic is treated in a specific sub-directory
+- This is the remote repo that contains all our Nodejs backend lecture codes and assignment solutions for all covered weeks. It should serve as a <ins>progress guide</ins> and <ins>consistency tracker</ins>.
+- The </ins>commit messages</ins> are detailed, and can be used to track what week and topic is treated in a </ins>specific sub-directory</ins>
 
 ## Getting Started
 
