@@ -8,7 +8,8 @@ app.use(express.json());
 app.use('/api/auth', authRouter);
 app.use('/api/users', usersRouter);
 
-const { PORT: port } = process.env;
+const port = process.env.PORT;
+
 app.listen(port, () => {
   console.log(`Express server is running on port ${port}`);
 });

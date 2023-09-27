@@ -1,7 +1,5 @@
-/node_modules
-/private
+# personal inspiration for mentees
+*.txt
 
-*.env
-
-# Editor config for MySQL
+# VS Code Configuration for MySQL 
 .vscode
