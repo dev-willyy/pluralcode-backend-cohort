@@ -2,3 +2,6 @@
 /private
 
 *.env
+
+# Editor config for MySQL
+.vscode
