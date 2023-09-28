@@ -77,7 +77,7 @@ server.on('request', (req, res) => {
           resBody.push(chunk);
         })
         .on('end', () => {
-          const data = JSON.parse(Buffer.concat(resBody).toString());
+          const data = JSON.parse(Buffer.concat(resBody));
           users.push(data);
 
           res.statusCode = 201;
