@@ -36,11 +36,14 @@ const registerController = (req, res, next) => {
       };
       users.push(newUser);
 
-      fs.writeFileSync(usersDatabase, JSON.stringify(users, null, 2));
+      const isDatabaseUpdated = fs.writeFileSync(usersDatabase, JSON.stringify(users, null, 2));
 
-      return res.status(201).json({
-        message: `${username} registered succesfully`,
-      });
+      if (isDatabaseUpdated) {
+        return res.status(201).json({
+          message: `${username} registered succesfully`,
+        });
+      }
+      throw new Error('Error writing user data into file');
     } else {
       const { details } = error;
       const { message } = details[0];
