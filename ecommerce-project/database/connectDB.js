@@ -1,8 +1,13 @@
 const mongoose = require('mongoose');
 
+const env = function checkEnvironment() {
+  if (process.env.NODE_ENV === 'dev') return process.env.MONGODB_URI_DEV;
+  return process.env.MONGODB_URI_PROD;
+};
+
 async function connectDB() {
   try {
-    const isConnected = await mongoose.connect(process.env.MONGODB_URI_DEV, {
+    const isConnected = await mongoose.connect(env(), {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });

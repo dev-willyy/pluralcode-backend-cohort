@@ -1,4 +1,4 @@
-const { userSchema, loginSchema } = require('../models/userModel');
+const { userSchema, loginSchema } = require('../models/userModel.js');
 /**
  * 1. require fs and path (which are in-built in Nodejs), bcrypt (installed seperately)
  * 2. require jwt for user token
