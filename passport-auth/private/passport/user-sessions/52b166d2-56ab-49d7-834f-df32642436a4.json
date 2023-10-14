@@ -1,0 +1,15 @@
+{
+  "cookie": {
+    "originalMaxAge": null,
+    "expires": null,
+    "httpOnly": true,
+    "path": "/"
+  },
+  "passport": {
+    "user": {
+      "username": "usernames",
+      "password": "passwords"
+    }
+  },
+  "__lastAccess": 1697312509536
+}
