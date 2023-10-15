@@ -6,6 +6,7 @@ require('dotenv').config({ path: './config/.env' });
 const { connectDB, isDBDisconnected } = require('./database/connectDB.js');
 const { authRouter } = require('./routes/auth.js');
 const { usersRouter } = require('./routes/users.js');
+const { productsRouter } = require('./routes/products.js');
 
 const app = express();
 
@@ -18,6 +19,7 @@ isDBDisconnected();
 
 app.use('/api/auth', authRouter);
 app.use('/api/users', usersRouter);
+app.use('/api/products', productsRouter);
 
 const { PORT: port } = process.env;
 app
