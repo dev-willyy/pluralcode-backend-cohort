@@ -1,4 +1,4 @@
-const { GenericProduct } = require('../models/productModel.js');
+const { productModel } = require('../models/productModel.js');
 
 /**
  *  we can have multiple units of the same product
@@ -9,21 +9,42 @@ const { GenericProduct } = require('../models/productModel.js');
  *  if (incoming serialNumber is > lastProduct's serialNumber + 1) return `Serial number must be lastProduct.serialNumber + 1`;
  *
  *  I'll do some explanations when we meet during the week
+ *
+ *  Switch Model based on the productKind coming from req.body
+ *  {find another way of implementing this so that the pre middleware can run}
+ *  Return a response message to the admin if (!productKind)
  */
 
 async function createProductController(req, res, next) {
   const { serialNumber, ...otherProperties } = req.body;
 
-  try {
-    const existingProduct = await GenericProduct.findOne({ serialNumber });
+  if (!productKind)
+    return res.status(401).json({
+      message: `productKind field is required`,
+    });
 
-    if (existingProduct)
+  function switchModel() {
+    if (productKind.toLowerCase() === 'generic') return productModel;
+    if (productKind.toLowerCase() === 'shoe') return Shoe;
+    if (productKind.toLowerCase() === 'car') return Car;
+
+    res.status(403).json({
+      message: `productKind must either be generic or shoe or car`,
+    });
+    throw new Error('Error switching product model');
+  }
+
+  try {
+    const productModel = switchModel()
+    const productWithSerialNumber = await productModel.findOne({ serialNumber });
+    const lastProduct = await productModel.findOne({}, {}, { sort: { serialNumber: -1 } });
+
+    if (productWithSerialNumber)
       return res.status(409).json({
-        message: `Product with serialNumber: ${serialNumber} already exists
+        message: `Product with serialNumber: ${serialNumber} already exists. Try ${lastProduct.serialNumber + 1}
     `,
       });
 
-    const lastProduct = await GenericProduct.findOne({}, {}, { sort: { serialNumber: -1 } });
     const generateSerialNumber = () => {
       if (!lastProduct) return 1;
       if (serialNumber > lastProduct.serialNumber + 1) {
@@ -33,14 +54,14 @@ async function createProductController(req, res, next) {
       return serialNumber;
     };
 
-    const newGenericProduct = new GenericProduct({
+    const newGenericProduct = new productModel({
       serialNumber: generateSerialNumber(),
       ...otherProperties,
     });
     await newGenericProduct.save();
     res.status(201).json({ message: 'New generic product successfully created' });
   } catch (err) {
-    console.error('Error creating new product: ', err);
+    console.error('productCreationError: ', err.message);
   }
 }
 
