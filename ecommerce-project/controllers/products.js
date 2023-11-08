@@ -1,9 +1,9 @@
-const { productModel } = require('../models/productModel.js');
+const { productModel, GenericProduct, Car, Shoe } = require('../models/productModel.js');
 
 /**
  *  we can have multiple units of the same product
  *  so, we check (if a product serialNumber already exists in the db)
- *	serialNumber has to has increment from 1
+ *	serialNumber has to increment from 1
  *  Also return different responses to client based on productType
  *
  *  if (incoming serialNumber is > lastProduct's serialNumber + 1) return `Serial number must be lastProduct.serialNumber + 1`;
@@ -14,6 +14,33 @@ const { productModel } = require('../models/productModel.js');
  *  {find another way of implementing this so that the pre middleware can run}
  *  Return a response message to the admin if (!productKind)
  */
+
+async function createProduct(req, res, next) {
+  const { productKind, ...otherProperties } = req.body;
+
+  let product;
+
+  switch (productKind.toLowerCase()) {
+    case 'generic':
+      product = new GenericProduct({ productKind, ...otherProperties });
+      break;
+    case 'car':
+      product = new Car({ productKind, ...otherProperties });
+      break;
+    case 'shoe':
+      product = new Shoe({ productKind, ...otherProperties });
+      break;
+    default:
+      return res.status(400).json({ message: 'Invalid productKind' });
+  }
+
+  try {
+    await product.save();
+    res.status(201).json({ message: 'Product created successfully!' });
+  } catch (err) {
+    console.error(err);
+  }
+}
 
 async function createProductController(req, res, next) {
   const { serialNumber, ...otherProperties } = req.body;
@@ -35,7 +62,7 @@ async function createProductController(req, res, next) {
   }
 
   try {
-    const productModel = switchModel()
+    const productModel = switchModel();
     const productWithSerialNumber = await productModel.findOne({ serialNumber });
     const lastProduct = await productModel.findOne({}, {}, { sort: { serialNumber: -1 } });
 
@@ -65,4 +92,4 @@ async function createProductController(req, res, next) {
   }
 }
 
-module.exports = { createProductController };
+module.exports = { createProductController, createProduct };

@@ -1,17 +1,11 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
-/**
- * Add productKind to genericSchema
- * Use/Enforce only either of these 'Generic' || 'Shoe' || 'Car' as the value of productKind,
- * and any lettercase should be allowed
- */
-
-const genericSchema = new Schema(
+const productSchema = new Schema(
   {
     productKind: {
       type: String,
-      enum: ['Generic', 'Shoe', 'Car'],
+      enum: ['generic', 'car', 'shoe'],
       required: true,
     },
     name: {
@@ -48,15 +42,17 @@ const genericSchema = new Schema(
   }
 );
 
-genericSchema.pre('validate', (next) => {
-  if (this.productKind) {
-    this.productKind === this.productKind.toLowerCase();
-  }
-  return next();
-});
+const GenericProduct = mongoose.model('Product', productSchema);
 
-const genericSchemaConfig = new Schema(genericSchema, {
-  discriminatorKey: 'productKind',
+const carSchema = new Schema({
+  productionYear: {
+    type: String,
+    required: true,
+  },
+  model: {
+    type: String,
+    required: true,
+  },
 });
 
 const shoeSchema = new Schema({
@@ -70,20 +66,11 @@ const shoeSchema = new Schema({
   },
 });
 
-const carSchema = new Schema({
-  productionYear: {
-    type: String,
-    required: true,
-  },
-});
-
-/**
- * Switch Model based on the productKind field
- * return only one model from a pickModel function
- * default export should be the return value of the pickModel function
- */
-const GenericProduct = mongoose.model('product', genericSchemaConfig);
-const Shoe = GenericProduct.discriminator('Shoe', shoeSchema);
 const Car = GenericProduct.discriminator('Car', carSchema);
+const Shoe = GenericProduct.discriminator('Shoe', shoeSchema);
 
-module.exports = { GenericProduct, Shoe, Car };
+module.exports = {
+  GenericProduct,
+  Car,
+  Shoe,
+};
