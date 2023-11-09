@@ -1,95 +1,114 @@
-const { productModel, GenericProduct, Car, Shoe } = require('../models/productModel.js');
-
-/**
- *  we can have multiple units of the same product
- *  so, we check (if a product serialNumber already exists in the db)
- *	serialNumber has to increment from 1
- *  Also return different responses to client based on productType
- *
- *  if (incoming serialNumber is > lastProduct's serialNumber + 1) return `Serial number must be lastProduct.serialNumber + 1`;
- *
- *  I'll do some explanations when we meet during the week
- *
- *  Switch Model based on the productKind coming from req.body
- *  {find another way of implementing this so that the pre middleware can run}
- *  Return a response message to the admin if (!productKind)
- */
-
-async function createProduct(req, res, next) {
-  const { productKind, ...otherProperties } = req.body;
-
-  let product;
-
-  switch (productKind.toLowerCase()) {
-    case 'generic':
-      product = new GenericProduct({ productKind, ...otherProperties });
-      break;
-    case 'car':
-      product = new Car({ productKind, ...otherProperties });
-      break;
-    case 'shoe':
-      product = new Shoe({ productKind, ...otherProperties });
-      break;
-    default:
-      return res.status(400).json({ message: 'Invalid productKind' });
-  }
-
-  try {
-    await product.save();
-    res.status(201).json({ message: 'Product created successfully!' });
-  } catch (err) {
-    console.error(err);
-  }
-}
+const { GenericProduct, Car, Shoe } = require('../models/productModel.js');
 
 async function createProductController(req, res, next) {
-  const { serialNumber, ...otherProperties } = req.body;
+  const { productKind, ...otherProperties } = req.body;
 
-  if (!productKind)
-    return res.status(401).json({
-      message: `productKind field is required`,
-    });
+  let productModel;
+  let productModelName;
+  let product;
 
-  function switchModel() {
-    if (productKind.toLowerCase() === 'generic') return productModel;
-    if (productKind.toLowerCase() === 'shoe') return Shoe;
-    if (productKind.toLowerCase() === 'car') return Car;
-
-    res.status(403).json({
-      message: `productKind must either be generic or shoe or car`,
-    });
-    throw new Error('Error switching product model');
+  switch (productKind) {
+    case 'generic':
+      productModel = GenericProduct;
+      productModelName = 'Product';
+      break;
+    case 'car':
+      productModel = Car;
+      productModelName = 'Car';
+      break;
+    case 'shoe':
+      productModel = Shoe;
+      productModelName = 'Shoe';
+      break;
+    default:
+      productModel = undefined;
+      productModelName = undefined;
   }
 
-  try {
-    const productModel = switchModel();
-    const productWithSerialNumber = await productModel.findOne({ serialNumber });
-    const lastProduct = await productModel.findOne({}, {}, { sort: { serialNumber: -1 } });
-
-    if (productWithSerialNumber)
-      return res.status(409).json({
-        message: `Product with serialNumber: ${serialNumber} already exists. Try ${lastProduct.serialNumber + 1}
-    `,
-      });
-
-    const generateSerialNumber = () => {
-      if (!lastProduct) return 1;
-      if (serialNumber > lastProduct.serialNumber + 1) {
-        res.status(405).json({ message: `SerialNumber not allowed. must be ${lastProduct.serialNumber + 1}` });
-        throw new Error('Error with serialNumber field');
-      }
-      return serialNumber;
-    };
-
-    const newGenericProduct = new productModel({
-      serialNumber: generateSerialNumber(),
-      ...otherProperties,
+  if (!productModel) {
+    console.error('No productModel selected');
+    return res.status(400).json({
+      error: "valid productKind required. Should either have a value of 'Car' or 'Generic' or 'Shoe'",
     });
-    await newGenericProduct.save();
-    res.status(201).json({ message: 'New generic product successfully created' });
+  }
+
+  /**
+   *
+   * Check if lastProduct's Model === incomingProduct's Model
+   * if (lastproduct's Model === incomingProduct's Model) return serialNumber + 1;
+   * else return lastProduct's serialNumber + 1 {using the lastProduct's model} ✅
+   *
+   * As for the Seperate Collection issue:
+   * Each Products based on their productKind has been nested within seperate Array defined for them
+   * However, all the three product categories will remain within the same collection since MongoDB does not support sub-collections natively ✅
+   *
+   **/
+
+  const autoGenerateSerialNumber = async () => {
+    const count = await productModel.countDocuments({ constructor: { modelName: productModelName } });
+
+    if (count > 0) {
+      const lastProduct = await productModel.findOne(
+        { constructor: { modelName: productModelName } },
+        {},
+        { sort: { serialNumber: -1 } }
+      );
+      const { serialNumber } = lastProduct._doc;
+      return serialNumber + 1;
+    }
+
+    return 1;
+  };
+
+  const serialNumber = await autoGenerateSerialNumber();
+
+  try {
+    switch (productKind) {
+      case 'generic':
+        product = new GenericProduct({ serialNumber, productKind, ...otherProperties });
+        break;
+      case 'car':
+        product = new Car({ serialNumber, productKind, ...otherProperties });
+        break;
+      case 'shoe':
+        product = new Shoe({ serialNumber, productKind, ...otherProperties });
+        break;
+      default:
+        product = undefined;
+    }
+
+    if (product) {
+      await product.save();
+      return res.status(201).json({ message: 'Product created successfully!', product });
+    }
+    throw new Error("valid productKind required. Should either have a value of 'Car' or 'Generic' or 'Shoe'");
   } catch (err) {
-    console.error('productCreationError: ', err.message);
+    console.error(err.message);
+    return res.status(400).json({ error: err.message });
   }
 }
 
-module.exports = { createProductController, createProduct };
+async function getSingleProductController() {}
+async function deleteSingleProductController() {}
+async function updateSingleProductController() {}
+
+async function getAllProductsController(req, res, next) {
+  const genericProducts = await GenericProduct.find({ productKind: 'generic' });
+  const carProducts = await Car.find({});
+  const shoeProducts = await Shoe.find({});
+
+  try {
+    res.status(200).json({ genericProducts, carProducts, shoeProducts });
+  } catch (err) {
+    console.error(err);
+    return res.status(404).json({ error: err });
+  }
+}
+
+module.exports = {
+  createProductController,
+  getAllProductsController,
+  getSingleProductController,
+  deleteSingleProductController,
+  updateSingleProductController,
+};

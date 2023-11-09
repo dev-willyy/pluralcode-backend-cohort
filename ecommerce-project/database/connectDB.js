@@ -2,7 +2,8 @@ const mongoose = require('mongoose');
 
 const env = function checkEnvironment() {
   if (process.env.NODE_ENV === 'dev') return process.env.MONGODB_URI_DEV;
-  return process.env.MONGODB_URI_PROD;
+  if (process.env.NODE_ENV === 'prod-test') return process.env.PROD_TEST;
+  return process.env.MONGODB_URI_PROD_LIVE;
 };
 
 async function connectDB() {

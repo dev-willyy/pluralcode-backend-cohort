@@ -5,8 +5,14 @@ const productSchema = new Schema(
   {
     productKind: {
       type: String,
-      enum: ['generic', 'car', 'shoe'],
       required: true,
+      validate: {
+        validator: (value) => {
+          const lowerCaseValue = value.toLowerCase();
+          return ['generic', 'car', 'shoe'].includes(lowerCaseValue);
+        },
+        message: (props) => `${props.value} is not a valid product kind. Valid options are: generic, car, shoe`,
+      },
     },
     name: {
       type: String,
@@ -27,7 +33,6 @@ const productSchema = new Schema(
     serialNumber: {
       type: Number,
       unique: true,
-      required: true,
     },
     description: {
       type: String,
