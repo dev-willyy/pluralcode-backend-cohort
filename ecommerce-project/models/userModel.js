@@ -56,6 +56,7 @@ function validateUserReg(user) {
     mobile: commonDefinition(),
     confirmPassword: Joi.string().required().valid(Joi.ref('password')),
     ...commonProperties,
+    isAdmin: Joi.boolean(),
   });
 
   return registerSchema.validate(user);

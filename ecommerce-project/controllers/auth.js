@@ -1,6 +1,7 @@
 const { User } = require('../models/userModel.js');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const RevokedToken = require('../models/revokedTokenModel.js');
 
 async function registerController(req, res, next) {
   const { username, email, mobile, password, ...otherCredentials } = req.body;
@@ -57,4 +58,25 @@ async function loginController(req, res, next) {
   }
 }
 
-module.exports = { registerController, loginController };
+async function isTokenRevoked(token) {
+  const revokedToken = await RevokedToken.findOne({token});
+  return !!revokedToken;
+}
+
+async function logoutController(req, res, next) {
+  try {
+    if (await isTokenRevoked(req.token))
+      return res.status(401).json({
+        message: 'Token has already been revoked',
+      });
+
+    await RevokedToken.create({ token: req.token });
+    res.clearCookie('access_token');
+    res.status(200).json({ message: 'Logout successful' });
+  } catch (err) {
+    console.error('Error logging out: ', err);
+    res.status(500).json('Error logging out: ', err);
+  }
+}
+
+module.exports = { registerController, loginController, logoutController };

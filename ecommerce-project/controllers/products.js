@@ -88,9 +88,56 @@ async function createProductController(req, res, next) {
   }
 }
 
-async function getSingleProductController() {}
-async function deleteSingleProductController() {}
-async function updateSingleProductController() {}
+async function getSingleProductController(req, res, next) {
+  const { id } = req.params;
+
+  try {
+    const product =
+      (await GenericProduct.findOne({ _id: id, productKind: 'generic' })) ||
+      (await Car.findOne({ _id: id })) ||
+      (await Shoe.findOne({ _id: id }));
+
+    res.status(200).json(product);
+  } catch (err) {
+    console.error(err.message);
+    return res.status(404).send(err.message);
+  }
+}
+
+async function deleteSingleProductController(req, res, next) {
+  const { id } = req.params;
+
+  try {
+    (await GenericProduct.findByIdAndDelete({ _id: id, productKind: 'generic' })) |
+      (await Car.findByIdAndDelete({ _id: id })) |
+      (await Shoe.findByIdAndDelete({ _id: id }));
+
+    res.status(200).json({ message: 'Product successfully deleted' });
+  } catch (err) {
+    console.error(err.message);
+    return res.status(404).send(err.message);
+  }
+}
+
+async function updateSingleProductController(req, res, next) {
+  const { ...updatedProductDetails } = req.body;
+  const { id } = req.params;
+
+  if (Object.keys(updatedProductDetails).length === 0 || Object.values(updatedProductDetails).length === 0)
+    return res.status(400).json({
+      message: 'Data to be updated must be passed',
+    });
+
+  try {
+    const updatedProduct =
+      (await GenericProduct.findByIdAndUpdate({ _id: id }, { ...updatedProductDetails }, { new: true })) ||
+      Car.findByIdAndUpdate({ _id: id }, { ...updatedProductDetails }, { new: true }) ||
+      Shoe.findByIdAndUpdate({ _id: id }, { ...updatedProductDetails }, { new: true });
+    return res.status(200).json(updatedProduct._doc);
+  } catch (err) {
+    console.error('Error updating product: ', err);
+  }
+}
 
 async function getAllProductsController(req, res, next) {
   const genericProducts = await GenericProduct.find({ productKind: 'generic' });

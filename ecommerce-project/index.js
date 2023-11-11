@@ -6,6 +6,9 @@ const { connectDB, isDBDisconnected } = require('./database/connectDB.js');
 const { authRouter } = require('./routes/auth.js');
 const { usersRouter } = require('./routes/users.js');
 const { productsRouter } = require('./routes/products.js');
+/**
+ * const cryptoVal = require('crypto').randomBytes(32).toString('hex'); { To create SECRET_TOKEN }
+ */
 
 const app = express();
 

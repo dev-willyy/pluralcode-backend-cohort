@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { Schema } = mongoose;
+const { Schema, model } = mongoose;
 
 const productSchema = new Schema(
   {
@@ -47,7 +47,7 @@ const productSchema = new Schema(
   }
 );
 
-const GenericProduct = mongoose.model('Product', productSchema);
+const GenericProduct = model('Product', productSchema);
 
 const carSchema = new Schema({
   productionYear: {
