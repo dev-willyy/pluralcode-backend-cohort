@@ -6,8 +6,10 @@ const { connectDB, isDBDisconnected } = require('./database/connectDB.js');
 const { authRouter } = require('./routes/auth.js');
 const { usersRouter } = require('./routes/users.js');
 const { productsRouter } = require('./routes/products.js');
+const { cartRouter } = require('./routes/cart.js');
 /**
  * const cryptoVal = require('crypto').randomBytes(32).toString('hex'); { To create SECRET_TOKEN }
+ * 
  */
 
 const app = express();
@@ -29,6 +31,7 @@ isDBDisconnected();
 app.use('/api/auth', authRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/products', productsRouter);
+app.use('/api/carts', cartRouter);
 
 const { PORT: port } = process.env;
 app
