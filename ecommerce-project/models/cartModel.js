@@ -4,7 +4,7 @@ const { ObjectId } = Schema.Types;
 
 const cartSchema = new Schema(
   {
-    user: {
+    owner: {
       type: ObjectId,
       ref: 'User',
       required: true,
@@ -25,7 +25,7 @@ const cartSchema = new Schema(
         },
       },
     ],
-    bill: {
+    totalAmount: {
       type: Number,
       default: 0,
       required: true,

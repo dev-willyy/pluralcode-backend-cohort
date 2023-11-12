@@ -1,10 +1,11 @@
 const express = require('express');
-const { getSingleUserCart, addToCartController } = require('../controllers/cart.js');
+const { getCartController, addToCartController, deleteProductFromCartController } = require('../controllers/cart.js');
 const { ordinaryUserVerificationMiddleware } = require('../middlewares/verificationMiddleware.js');
 
 const router = new express.Router();
 
-router.get('/', ordinaryUserVerificationMiddleware, getSingleUserCart);
-router.post('/add', ordinaryUserVerificationMiddleware, addToCartController);
+router.get('/', ordinaryUserVerificationMiddleware, getCartController);
+router.post('/add-to-cart', ordinaryUserVerificationMiddleware, addToCartController);
+router.delete('/products/:productId', ordinaryUserVerificationMiddleware, deleteProductFromCartController);
 
 module.exports = { cartRouter: router };
